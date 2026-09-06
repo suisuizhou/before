@@ -1,0 +1,5 @@
+data_name: HUSTStrict
+data_path: Dataset/HUST_STRICT_CACHE_V2
+TL_list: [0, 1, 2, 3]
+input_kind: fft
+norm_kind: mean-std

@@ -1,0 +1,5 @@
+data_name: UO
+data_path: /home/std04/Projects/DtCC_FOA_ViT_v1/DtCC_FOA_V1/Dataset/UO_CACHE
+TL_list: [0, 1, 2, 3]
+TL_Task: [0, 1]
+input_kind: fft

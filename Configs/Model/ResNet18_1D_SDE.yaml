@@ -1,0 +1,16 @@
+model_name: 'ResNet18_1D_SDE'
+
+bottleneck: true
+bottleneck_num: 128
+temp: 1
+model_type: 'linear'
+Dropout: true
+
+input_len: 512
+in_chans: 1
+drop_rate: 0.0
+
+# Source阶段关闭，Target TTA命令中再显式开启
+use_spectral_adapter: false
+band_num: 256
+adapter_delta: 0.1

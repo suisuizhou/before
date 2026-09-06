@@ -1,0 +1,98 @@
+version: 1
+protocol:
+  dataset: PU4D
+  data_path: Dataset/PU4D_CACHE
+  runner: main_tta_0711_strict_online.py
+  model: ResNet18_1D_SDE
+  model_type: linear
+  batch_size: 128
+  num_workers: 4
+  source_seed: 2025
+  stream_seed: 2025
+  mode: full
+  passes: 1
+  gpu: 0
+checkpoints:
+  root: TTA_Model/PU4D0.001
+  filename: best_source_ResNet18_1D_SDE2025fft_Linear.pt
+  expected_sha256:
+    "0": c94c39f52c6929329dc5d20cc446d2ed5b2d036a9464bb20eb2713e1cf04a71f
+    "1": 7d3e7f7c39fb39f3ad29602abf8ec43bcebcfe0b89e8681000b3fedcbb236f89
+    "2": 586c5f74ed061bf88a64bfe2b976da16ad01104756a46633385f31e5d120a65f
+    "3": 8d2d9035a6aa679279061948f4c66844909eddf7900fa6de3788edbad6347acb
+recovery:
+  expected_mean: 62.7342
+  tolerance: 0.05
+  expected:
+    "0to1": 40.18
+    "0to2": 94.93
+    "0to3": 68.45
+    "1to0": 65.58
+    "1to2": 63.18
+    "1to3": 45.65
+    "2to0": 95.61
+    "2to1": 43.52
+    "2to3": 70.20
+    "3to0": 67.09
+    "3to1": 30.15
+    "3to2": 68.27
+tasks:
+  development: [[0, 1], [0, 3], [1, 0]]
+  heldout: [[0, 2], [1, 2], [1, 3], [2, 0], [2, 1], [2, 3], [3, 0], [3, 1], [3, 2]]
+budget:
+  tuning_hours: 24
+  estimated_task_minutes: 16
+  reserve_minutes: 30
+selection:
+  minimum_mean_gain: 0.30
+  maximum_task_regression: 0.50
+  stability_stream_seed: 2026
+search:
+  groups:
+    - name: learning_rate
+      values:
+        - {Opt.lr_tar: 0.008}
+        - {Opt.lr_tar: 0.012}
+        - {Opt.lr_tar: 0.015}
+        - {Opt.lr_tar: 0.018}
+        - {Opt.lr_tar: 0.024}
+    - name: warp_lr_scale
+      values:
+        - {TTA0711.warp_lr_scale: 0.05}
+        - {TTA0711.warp_lr_scale: 0.10}
+        - {TTA0711.warp_lr_scale: 0.20}
+    - name: ema_beta
+      values:
+        - {TTA0711.ema_beta: 0.990}
+        - {TTA0711.ema_beta: 0.995}
+        - {TTA0711.ema_beta: 0.999}
+    - name: warmup_batches
+      values:
+        - {TTA0711.warmup_batches: 0}
+        - {TTA0711.warmup_batches: 10}
+        - {TTA0711.warmup_batches: 25}
+    - name: aux_ramp_batches
+      values:
+        - {TTA0711.aux_ramp_batches: 10}
+        - {TTA0711.aux_ramp_batches: 20}
+        - {TTA0711.aux_ramp_batches: 40}
+    - name: min_reliability
+      values:
+        - {TTA0711.min_reliability: 0.10}
+        - {TTA0711.min_reliability: 0.20}
+        - {TTA0711.min_reliability: 0.30}
+    - name: loss_profile
+      values:
+        - {TTA0711.lambda_mt: 0.01, TTA0711.lambda_pcl: 0.01, TTA0711.lambda_ncl: 0.005}
+        - {TTA0711.lambda_mt: 0.02, TTA0711.lambda_pcl: 0.02, TTA0711.lambda_ncl: 0.01}
+        - {TTA0711.lambda_mt: 0.04, TTA0711.lambda_pcl: 0.04, TTA0711.lambda_ncl: 0.02}
+    - name: memory_per_class
+      values:
+        - {TTA0711.memory_per_class: 32}
+        - {TTA0711.memory_per_class: 64}
+        - {TTA0711.memory_per_class: 128}
+    - name: contrastive_temperature
+      values:
+        - {TTA0711.pcl_temperature: 0.10, TTA0711.ncl_temperature: 0.10}
+        - {TTA0711.pcl_temperature: 0.20, TTA0711.ncl_temperature: 0.20}
+        - {TTA0711.pcl_temperature: 0.30, TTA0711.ncl_temperature: 0.30}

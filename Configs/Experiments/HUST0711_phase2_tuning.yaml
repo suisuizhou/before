@@ -1,0 +1,91 @@
+version: 1
+base_config: Configs/Experiments/HUST0711_strict_tuning.yaml
+phase1_run_dir: logs/HUST_DTCC_0711_STRICT_20260824_081610
+phase1_candidate: 910c5cf51b62
+protocol:
+  search_seed: 2027
+  stability_seed: 2028
+  final_seed: 2029
+  development_tasks: [[0, 1], [1, 2], [2, 3], [3, 0]]
+  minimum_search_gain: 0.10
+  maximum_search_task_regression: 1.00
+  maximum_stability_task_regression: 1.50
+  finalists: 5
+anchor_overrides:
+  Opt.lr_tar: 0.036
+  TTA0711.adapter_lr_scale: 2.0
+  TTA0711.warp_lr_scale: 0.20
+  TTA0711.ema_beta: 0.990
+  TTA0711.warmup_batches: 10
+  TTA0711.aux_ramp_batches: 10
+  TTA0711.min_reliability: 0.20
+  TTA0711.lambda_mt: 0.02
+  TTA0711.lambda_pcl: 0.02
+  TTA0711.lambda_ncl: 0.01
+  TTA0711.memory_per_class: 64
+  TTA0711.pcl_temperature: 0.10
+  TTA0711.ncl_temperature: 0.10
+groups:
+  - name: target_learning_rate_extended
+    values: [0.024, 0.030, 0.036, 0.045, 0.055, 0.070, 0.090, 0.120]
+    keys: [Opt.lr_tar]
+  - name: adapter_lr_scale_extended
+    values: [1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0]
+    keys: [TTA0711.adapter_lr_scale]
+  - name: warp_lr_scale_extended
+    values: [0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.75, 1.00]
+    keys: [TTA0711.warp_lr_scale]
+  - name: ema_beta_extended
+    values: [0.980, 0.985, 0.990, 0.9925, 0.995]
+    keys: [TTA0711.ema_beta]
+  - name: minimum_reliability_fine
+    values: [0.12, 0.16, 0.20, 0.24, 0.28]
+    keys: [TTA0711.min_reliability]
+  - name: warmup_fine
+    values: [5, 10, 15, 20]
+    keys: [TTA0711.warmup_batches]
+  - name: auxiliary_ramp_fine
+    values: [5, 10, 15, 25]
+    keys: [TTA0711.aux_ramp_batches]
+  - name: mean_teacher_weight
+    values: [0.005, 0.010, 0.020, 0.040, 0.080]
+    keys: [TTA0711.lambda_mt]
+  - name: pcl_weight
+    values: [0.005, 0.010, 0.020, 0.040, 0.080]
+    keys: [TTA0711.lambda_pcl]
+  - name: ncl_weight
+    values: [0.0025, 0.005, 0.010, 0.020, 0.040]
+    keys: [TTA0711.lambda_ncl]
+  - name: adapter_regularization
+    values: [0.0001, 0.00025, 0.0005, 0.001, 0.0025]
+    keys: [TTA0711.lambda_adapter]
+  - name: warp_regularization
+    values: [0.00002, 0.00005, 0.0001, 0.0002, 0.0005]
+    keys: [TTA0711.lambda_warp]
+  - name: mt_warmup_scale
+    values: [0.25, 0.50, 0.75, 1.00]
+    keys: [TTA0711.mt_warmup_scale]
+  - name: asymmetric_temperatures
+    keys: [TTA0711.pcl_temperature, TTA0711.ncl_temperature]
+    values: [[0.05, 0.10], [0.10, 0.05], [0.10, 0.10], [0.10, 0.20], [0.20, 0.10]]
+  - name: reliability_gamma
+    values: [3.0, 4.0, 5.0, 6.0, 7.0]
+    keys: [TTA0711.view_gamma]
+  - name: style_view_strength
+    values: [0.020, 0.035, 0.050, 0.075, 0.100]
+    keys: [TTA0711.view_style_strength]
+  - name: warp_view_strength
+    values: [0.20, 0.35, 0.50, 0.70, 1.00]
+    keys: [TTA0711.view_warp_max]
+  - name: maximum_physical_mask_ratio
+    values: [0.10, 0.14, 0.18, 0.22, 0.26]
+    keys: [TTA0711.max_mask_ratio]
+  - name: physical_harmonics
+    values: [4, 6, 8, 10, 12]
+    keys: [TTA0711.physical_harmonics]
+  - name: physical_background_width
+    values: [3, 5, 7, 9, 11]
+    keys: [TTA0711.physical_background_width]
+  - name: evidence_interval
+    values: [1, 2, 3]
+    keys: [TTA0711.evidence_interval]

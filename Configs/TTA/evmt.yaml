@@ -1,0 +1,57 @@
+optim_steps: 1
+passes: 1
+version: evmt_bnfirst_v2
+method: bnfirst_full
+
+use_bn_stats: true
+train_bn_affine: true
+train_adapter: true
+train_warp: true
+bn_blend_batches: 5
+bn_target_weight_max: 0.9
+bn_eps: 1.0e-5
+bn_lr_scale: 0.1
+adapter_lr_scale: 1.0
+warp_lr_scale: 0.2
+
+ema_beta: 0.99
+alpha: 2.0
+eta: 0.1
+style_strength: 0.03
+view_warp_max: 0.5
+evidence_bands: 2
+evidence_width: 16
+min_conf: 0.35
+max_js: 0.15
+min_class_support: 2
+reliability_gamma: 5.0
+
+warmup_batches: 20
+coverage_window: 5
+min_pred_classes: 24
+min_memory_classes: 16
+min_entries_per_class: 2
+memory_per_class: 32
+neighbor_k: 5
+tau: 0.1
+
+lambda_pcl: 0.2
+lambda_ncl: 0.2
+lambda_mt: 0.5
+lambda_bn: 0.001
+lambda_reg: 0.001
+lambda_warp: 0.0002
+warp_smooth_weight: 5.0
+grad_clip: 5.0
+
+min_effective_classes: 8
+max_class_share: 0.5
+max_effective_drop: 0.5
+
+use_frequency_warp: true
+warp_knots: 8
+max_warp: 2.0
+use_evidence: true
+use_pcl: true
+use_ncl: true
+use_mt: true

@@ -1,0 +1,102 @@
+version: 1
+protocol:
+  dataset: HUSTStrict
+  data_path: Dataset/HUST_STRICT_CACHE_V2
+  load_data_path: Dataset/HUST_STRICT_LOAD_CACHE_V2
+  model: ResNet18_1D_SDE
+  batch_size: 128
+  num_workers: 4
+  source_seed: 2025
+  stream_seed: 2025
+  passes: 1
+  gpu_policy: auto_idle
+  max_gpu_utilization: 10
+  max_gpu_memory_fraction: 0.10
+routes:
+  source_ordinary: main_src_dtcc_hust_strict.py
+  source_robust: main_src_0711_hust_strict.py
+  dtcc_ordinary: main_tta_dtcc_hust_strict.py
+  0711_robust: main_tta_0711_hust_strict.py
+  0711_common: main_tta_0711_hust_strict.py
+checkpoints:
+  root: TTA_Model_HUST_STRICT_V2
+  load_root: TTA_Model_HUST_STRICT_LOAD_V2
+tasks:
+  development: [[0, 1], [1, 2], [2, 3], [3, 0]]
+  heldout: [[0, 2], [0, 3], [1, 0], [1, 3], [2, 0], [2, 1], [3, 1], [3, 2]]
+budget:
+  tuning_hours: 24
+  estimated_task_minutes: 16
+  reserve_minutes: 30
+selection:
+  minimum_mean_gain: 0.30
+  maximum_task_regression: 1.00
+  stability_stream_seed: 2026
+beginning_audit:
+  preferred_min: 25.0
+  preferred_max: 70.0
+  acceptable_count: 9
+  absolute_min: 15.0
+  absolute_max: 80.0
+fixed_overrides:
+  batch_size: 128
+  TTA0711.passes: 1
+  TTA0711.sampling_rate_hz: 51200
+  TTA0711.fft_size: 2048
+  TTA0711.spectrum_length: 512
+  TTA0711.physical_harmonics: 8
+  TTA0711.outer_sideband_orders: [0, 1]
+  TTA0711.inner_sideband_orders: [0, 1, 2]
+  TTA0711.ball_sideband_orders: [0, 1, 2]
+  TTA0711.max_mask_ratio: 0.18
+  TTA0711.adapter_delta: 0.10
+  TTA0711.max_warp: 2.0
+  TTA0711.warp_knots: 16
+  TTA0711.min_pcl_classes: 3
+  TTA0711.min_ncl_classes: 5
+  TTA0711.min_ncl_entries: 20
+baseline_overrides:
+  Opt.lr_tar: 0.015
+  TTA0711.adapter_lr_scale: 1.0
+  TTA0711.warp_lr_scale: 0.10
+  TTA0711.ema_beta: 0.995
+  TTA0711.warmup_batches: 5
+  TTA0711.aux_ramp_batches: 20
+  TTA0711.min_reliability: 0.20
+  TTA0711.lambda_mt: 0.02
+  TTA0711.lambda_pcl: 0.02
+  TTA0711.lambda_ncl: 0.01
+  TTA0711.memory_per_class: 64
+  TTA0711.pcl_temperature: 0.20
+  TTA0711.ncl_temperature: 0.20
+search:
+  initial_candidate:
+    name: frozen_pu4d_recommendation
+    overrides: {Opt.lr_tar: 0.024, TTA0711.warp_lr_scale: 0.10}
+  groups:
+    - name: learning_rate
+      values: [{Opt.lr_tar: 0.008}, {Opt.lr_tar: 0.015}, {Opt.lr_tar: 0.024}, {Opt.lr_tar: 0.036}]
+    - name: adapter_lr_scale
+      values: [{TTA0711.adapter_lr_scale: 0.5}, {TTA0711.adapter_lr_scale: 1.0}, {TTA0711.adapter_lr_scale: 2.0}]
+    - name: warp_lr_scale
+      values: [{TTA0711.warp_lr_scale: 0.05}, {TTA0711.warp_lr_scale: 0.10}, {TTA0711.warp_lr_scale: 0.20}]
+    - name: ema_beta
+      values: [{TTA0711.ema_beta: 0.990}, {TTA0711.ema_beta: 0.995}, {TTA0711.ema_beta: 0.999}]
+    - name: warmup_batches
+      values: [{TTA0711.warmup_batches: 0}, {TTA0711.warmup_batches: 5}, {TTA0711.warmup_batches: 10}]
+    - name: aux_ramp_batches
+      values: [{TTA0711.aux_ramp_batches: 10}, {TTA0711.aux_ramp_batches: 20}, {TTA0711.aux_ramp_batches: 40}]
+    - name: minimum_reliability
+      values: [{TTA0711.min_reliability: 0.10}, {TTA0711.min_reliability: 0.20}, {TTA0711.min_reliability: 0.30}]
+    - name: loss_profile
+      values:
+        - {TTA0711.lambda_mt: 0.01, TTA0711.lambda_pcl: 0.01, TTA0711.lambda_ncl: 0.005}
+        - {TTA0711.lambda_mt: 0.02, TTA0711.lambda_pcl: 0.02, TTA0711.lambda_ncl: 0.01}
+        - {TTA0711.lambda_mt: 0.04, TTA0711.lambda_pcl: 0.04, TTA0711.lambda_ncl: 0.02}
+    - name: memory_per_class
+      values: [{TTA0711.memory_per_class: 32}, {TTA0711.memory_per_class: 64}, {TTA0711.memory_per_class: 128}]
+    - name: contrastive_temperature
+      values:
+        - {TTA0711.pcl_temperature: 0.10, TTA0711.ncl_temperature: 0.10}
+        - {TTA0711.pcl_temperature: 0.20, TTA0711.ncl_temperature: 0.20}
+        - {TTA0711.pcl_temperature: 0.30, TTA0711.ncl_temperature: 0.30}

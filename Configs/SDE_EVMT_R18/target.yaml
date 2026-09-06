@@ -1,0 +1,81 @@
+dataset:
+  name: PU4D
+  cache_root: Dataset/PU4D_CACHE
+  input_kind: fft
+
+model:
+  input_len: 512
+  bottleneck_dim: 256
+  feature_hidden_dim: 64
+  gn_groups: 8
+  warp_knots: 16
+  max_warp: 2.0
+  spectral_bands: 64
+  adapter_delta: 0.1
+
+source: 0
+target: 1
+seed: 1
+device: cuda
+num_classes: 32
+checkpoint_root: TTA_Model/SDE_EVMT_R18/PU4D
+source_checkpoint: null
+output_root: outputs/sde_evmt_r18
+
+data:
+  batch_size: 512
+  num_workers: 2
+
+warmup_batches: 5
+teacher:
+  ema_beta: 0.99
+teacher_views:
+  style_strength: 0.05
+  warp_max: 0.5
+  noise_snr_min: 35.0
+  noise_snr_max: 45.0
+  gain_min: 0.97
+  gain_max: 1.03
+  baseline_scale: 0.01
+prior:
+  momentum: 0.9
+
+evidence:
+  smooth_kernel: 9
+  num_bands: 2
+  mask_ratio_min: 0.05
+  mask_ratio_max: 0.10
+reliability:
+  confidence_min: 0.3
+  gamma: 5.0
+  min_view_agreement: 0.75
+  min_class_samples: 4
+memory:
+  capacity_per_class: 64
+  neighbor_num: 5
+  neighbor_similarity_threshold: 0.3
+loss:
+  lambda_mt: 1.0
+  lambda_sem: 0.2
+  lambda_pcl: 0.1
+  lambda_ncl: 0.2
+  lambda_div: 1.0
+  lambda_warp_reg: 0.0002
+  lambda_adapter_reg: 0.0001
+  lambda_feature_anchor: 0.001
+  tsallis_alpha: 2.0
+  uncertain_floor: 0.1
+  pcl_temperature: 0.1
+optimizer:
+  lr_warp_adapter: 0.0005
+  lr_feature_adapter: 0.0001
+  lr_gn_affine: 0.00005
+  weight_decay: 0.00001
+  grad_clip: 1.0
+
+hydra:
+  run:
+    dir: .
+  output_subdir: null
+  job:
+    chdir: false

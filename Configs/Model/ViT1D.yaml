@@ -1,0 +1,18 @@
+model_name: 'ViT1D'
+bottleneck: True
+bottleneck_num: 128
+temp: 1
+model_type: 'linear'
+Dropout: True
+
+input_len: 512
+patch_size: 16
+in_chans: 1
+embed_dim: 256
+depth: 4
+num_heads: 4
+mlp_ratio: 4.0
+drop_rate: 0.1
+
+# 先留接口，source 训练阶段不启用 prompt
+prompt_len: 0

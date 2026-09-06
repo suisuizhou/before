@@ -1,0 +1,10 @@
+name: ResNet18_1D_GN_EVMT
+input_len: 512
+num_classes: 32
+bottleneck_dim: 256
+feature_hidden_dim: 64
+gn_groups: 8
+warp_knots: 16
+max_warp: 2.0
+spectral_bands: 64
+adapter_delta: 0.1

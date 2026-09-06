@@ -1,0 +1,5 @@
+data_name: HUSTBAL
+data_path: /home/std04/Projects/DtCC_FOA_ViT_v1/DtCC_FOA_V1/Dataset/HUST_CACHE_BAL
+TL_list: [0, 1, 2, 3]
+input_kind: 'fft'
+norm_kind: 'mean-std'
